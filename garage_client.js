@@ -5,28 +5,28 @@ var garageDoor = require('./garageDoor');
 var logger = require("./logger");
 
 var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
-var camera = new RaspiCam({
-    mode: 'photo', 
-    output: '/home/bladner/Dropbox/photos/image.jpg',
-    encoding: "jpg",
-    timeout: 0,
-    hf: true,
-    vf: true
-});
+//var camera = new RaspiCam({
+//    mode: 'photo', 
+//    output: '/home/bladner/Dropbox/photos/image.jpg',
+//    encoding: "jpg",
+//    timeout: 0,
+//    hf: true,
+//    vf: true
+//});
 
-camera.start();
+//camera.start();
 
-camera.on("started", function( err, timestamp ){
-	console.log("photo started at " + timestamp );
-});
+//camera.on("started", function( err, timestamp ){
+//	console.log("photo started at " + timestamp );
+//});
 
-camera.on("read", function( err, timestamp, filename ){
-	console.log("photo image captured with filename: " + filename );
-});
+//camera.on("read", function( err, timestamp, filename ){
+//	console.log("photo image captured with filename: " + filename );
+//});
 
-camera.on("exit", function( timestamp ){
-	console.log("photo child process has exited at " + timestamp );
-});
+//camera.on("exit", function( timestamp ){
+//	console.log("photo child process has exited at " + timestamp );
+//});
 
 
 //var sys = require('sys');
