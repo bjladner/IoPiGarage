@@ -7,7 +7,7 @@ var logger = require("./logger");
 var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 var camera = new RaspiCam({
     mode: 'photo', 
-    output: './photos/image.jpg',
+    output: '/home/bladner/Dropbox/photos/image.jpg',
     encoding: "jpg",
     timeout: 0,
     hf: true,
