@@ -72,9 +72,11 @@ io.on('connect', function(socket){
 io.on('ACTION', function(data){
     logger.debug("Data received: " + JSON.stringify(data));
     if (data.action == "CHANGE") {
-        garageDoors[data.nodeId].changeStatus(function () {
-            io.emit('SEND_DATA', garageDoors[data.nodeId]);
-        });  
+        garageDoors[data.nodeId].changeStatus();
+        // only SEND_DATA on Sensor Data, not input from controller
+        //garageDoors[data.nodeId].changeStatus(function () {
+        //    io.emit('SEND_DATA', garageDoors[data.nodeId]);
+        //});  
     } else if (data.action == "STATUS") {
         garageDoors[data.nodeId].getStatus(function () {
             io.emit('SEND_DATA', garageDoors[data.nodeId]);
