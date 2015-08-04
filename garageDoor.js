@@ -1,10 +1,8 @@
 var GPIO = require('onoff').Gpio;
 var logger = require("./logger");
 
-const openState = 1;
-const closedState = 0;
-
-var tempState = closedState;
+const openState = 0;
+const closedState = 1;
 
 module.exports = garageDoor;
 
@@ -24,7 +22,6 @@ function garageDoor(data) {
 garageDoor.prototype.changeStatus = function(callback) {
     var self = this;
     logger.info("Changing state of " + this.name + " using pin " + this.relayPin);
-    //tempState = !tempState;
     this.relay.writeSync(1);
     setTimeout(function () {
         self.relay.writeSync(0);
@@ -35,7 +32,6 @@ garageDoor.prototype.changeStatus = function(callback) {
 garageDoor.prototype.getStatus = function(callback) {
     var self = this;
     logger.debug("Getting state of door " + this.name + " using pin " + this.statePin);
-    //var value = tempState;
     var value = this.sensor.readSync();
     if (value == closedState) self.Status = "Closed";
     else if (value == openState) self.Status = "Open";
@@ -46,13 +42,12 @@ garageDoor.prototype.getStatus = function(callback) {
 
 garageDoor.prototype.watchSensor = function(callback) {  
     var self = this;
-    var currentStatus = this.Status;
     this.sensor.watch(function (err, state) {
         if (state == closedState) self.Status = "Closed";
         else if (state == openState) self.Status = "Open";
         else self.Status = "Unknown";
         self.lastStateChange = new Date().getTime();
-        logger.info(self.name + " changed state to " + self.Status + " from " + currentStatus);
+        logger.info(self.name + " changed state to " + self.Status);
         callback(null, self);
     });
 }

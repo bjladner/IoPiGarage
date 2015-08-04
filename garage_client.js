@@ -41,44 +41,45 @@ var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 
 
 var garageDoors = {};
+var piID = 'garageDoorPi';
 var signalStrength = 85;
 
 io.on('connect', function(socket){
-  logger.info("Connected to RPi2: " + cfg.server.address + ":" + cfg.server.port);
+    logger.info("Connected to RPi2: " + cfg.server.address + ":" + cfg.server.port);
+    //io.emit('INIT_DEVICE', piID);
   
-  for (var door in cfg.garage_doors){
-    newDeviceID = cfg.garage_doors[door].deviceID;
-    garageDoors[newDeviceID] = new garageDoor(cfg.garage_doors[door]);
-    garageDoors[newDeviceID].getStatus(function (err, result) {
-      logger.info("Sending data for: " + garageDoors[newDeviceID].name);
-      io.emit('INIT_DEVICE', garageDoors[newDeviceID]);
-    });
-  }
+    for (var door in cfg.garage_doors){
+        newDeviceID = cfg.garage_doors[door].deviceID;
+        garageDoors[newDeviceID] = new garageDoor(cfg.garage_doors[door]);
+        garageDoors[newDeviceID].getStatus(function (err, result) {
+            logger.info("Sending data for: " + garageDoors[newDeviceID].name);
+            io.emit('SEND_DATA', garageDoors[newDeviceID]);
+        });
+    }
 
-  for (var door in garageDoors){
-    garageDoors[door].watchSensor(function (err, updateDoor) {
-      if (err) { 
-        logger.ERROR("Error in intervalUpdate " + err);
-        throw err;
-      }
-      logger.debug("Sending updated data for " + updateDoor.name);
-      io.emit('SEND_DATA', updateDoor);
-    });
-  }
-  
+    for (var door in garageDoors){
+        garageDoors[door].watchSensor(function (err, updateDoor) {
+            if (err) { 
+                logger.ERROR("Error in intervalUpdate " + err);
+                throw err;
+            }
+            logger.debug("Sending updated data for " + updateDoor.name);
+            io.emit('SEND_DATA', updateDoor);
+        });
+    }
 });
 
 io.on('ACTION', function(data){
-  logger.debug("Data received: " + JSON.stringify(data));
-  if (data.action == "CHANGE") {
-    garageDoors[data.nodeId].changeStatus(function () {
-      io.emit('SEND_DATA', garageDoors[data.nodeId]);
-    });  
-  } else if (data.action == "STATUS") {
-    garageDoors[data.nodeId].getStatus(function () {
-      io.emit('SEND_DATA', garageDoors[data.nodeId]);
-    });  
-  } else {
-    logger.warn("Unknown command: " + data.action);
-  }
+    logger.debug("Data received: " + JSON.stringify(data));
+    if (data.action == "CHANGE") {
+        garageDoors[data.nodeId].changeStatus(function () {
+            io.emit('SEND_DATA', garageDoors[data.nodeId]);
+        });  
+    } else if (data.action == "STATUS") {
+        garageDoors[data.nodeId].getStatus(function () {
+            io.emit('SEND_DATA', garageDoors[data.nodeId]);
+        });  
+    } else {
+        logger.warn("Unknown command: " + data.action);
+    }
 });

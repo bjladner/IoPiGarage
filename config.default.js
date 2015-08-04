@@ -2,12 +2,12 @@ var cfg = {};
 
 // Server Information
 cfg.server = {};
-cfg.server.address = 'http://192.168.50.145';
+cfg.server.address = 'http://192.168.1.76';
 cfg.server.port = 8080;
 
 // Client Information
 cfg.client = {};
-cfg.client.address = 'http://192.160.50.120';
+cfg.client.address = 'http://192.168.1.241';
 
 // Garage Door settings
 cfg.garage_doors = {};
