@@ -26,7 +26,7 @@ garageDoor.prototype.changeStatus = function(callback) {
     setTimeout(function () {
         self.relay.writeSync(0);
     }, 750);
-    callback();
+    //callback();
 }
 
 garageDoor.prototype.getStatus = function(callback) {
