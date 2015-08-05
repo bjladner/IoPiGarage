@@ -19,14 +19,13 @@ function garageDoor(data) {
     this.lastStateChange = new Date().getTime();
 }
 
-garageDoor.prototype.changeStatus = function(callback) {
+garageDoor.prototype.changeStatus = function() {
     var self = this;
     logger.info("Changing state of " + this.name + " using pin " + this.relayPin);
     this.relay.writeSync(1);
     setTimeout(function () {
         self.relay.writeSync(0);
     }, 750);
-    //callback();
 }
 
 garageDoor.prototype.getStatus = function(callback) {
@@ -46,8 +45,11 @@ garageDoor.prototype.watchSensor = function(callback) {
         if (state == closedState) self.Status = "Closed";
         else if (state == openState) self.Status = "Open";
         else self.Status = "Unknown";
-        self.lastStateChange = new Date().getTime();
-        logger.info(self.name + " changed state to " + self.Status);
-        callback(null, self);
+		var currentTime = new Date().getTime();
+		if (currentTime > self.lastStateChange + 1000) {
+            self.lastStateChange = currentTime;
+            logger.info(self.name + " changed state to " + self.Status);
+            callback(null, self);
+		}
     });
 }
