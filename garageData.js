@@ -27,13 +27,6 @@ function garageData(clientName) {
     if (!this.sensorAvailable) {
         logger.warn('Failed to initialize sensor');
     }
-    
-    this.updateData(function() {
-        this.lastUpdate = new Date();
-        logger.debug(this.name + " Data updated " + this.lastUpdate.toLocaleTimeString());
-        logger.debug("Wifi: "+ this.wifi + ", Uptime: " + this.uptime + ", CPU Temp: " + this.cpuTemp + ", Amb Temp: " + this.temperature + ", Amb Humidity: " + this.humidity);
-    });
-
 }
 
 garageData.prototype.updateData = function(callback) {
