@@ -35,17 +35,17 @@ function garageData(clientName) {
 garageData.prototype.updateData = function() {
     exec(this.wifiCmd, function(error, stdout, stderr) {
         this.wifi = stdout + "0%";
-    }
+    };
     exec(this.uptimeCmd, function(error, stdout, stderr) {
         // split stdout between 2 numbers (use 1st number)
         var uptimeString = stdout.split(" ");
         // change from seconds to days, hours, minutes, seconds
         this.uptime = readify(parseFloat(uptimeString[0]));
-    }
+    };
     exec(this.cpuTempCmd, function(error, stdout, stderr) {
         var currentCpuTemp = parseFloat(stdout)/1000;
         this.cpuTemp = currentCpuTemp.toFixed() + "C";
-    }
+    };
     if (this.sensorAvailable) {
         var readout = sensorLib.read();
         this.temperature = readout.temperature.toFixed(2) + "C";
@@ -67,10 +67,10 @@ function readify(seconds) {
         {suffix: 'd', len: 60 * 60 * 24},
         {suffix: 'h', len: 60 * 60},
         {suffix: 'm', len: 60},
-        {suffix: 's', len: 1}]
+        {suffix: 's', len: 1}];
      
     // for each time piece, grab the value and remaining seconds, and add it to the time string
-    for (var part in parts){
+    for (var part in parts) {
         value = seconds / part.len;
         if (value > 0) {
             seconds = seconds % part.len;
