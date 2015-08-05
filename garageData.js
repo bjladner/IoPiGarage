@@ -15,22 +15,23 @@ function garageData(clientName) {
     // to run external commands in node.js, check out:
     // http://stackoverflow.com/questions/20643470/execute-a-command-line-binary-in-node-js
 
-	this.name = clientName;
-	this.wifi = '';
-	this.uptime = '';
-	this.cpuTemp = '';
-	this.temperature = '';
-	this.humidity = '';
+	var name = clientName;
+	var wifi = '';
+	var uptime = '';
+	var cpuTemp = '';
+	var temperature = '';
+	var humidity = '';
+    var lastUpdate = '';
 
-    this.sensorAvailable = sensorLib.initialize(cfg.sensor.type, cfg.sensor.gpio);
-    if (!this.sensorAvailable) {
+    var sensorAvailable = sensorLib.initialize(cfg.sensor.type, cfg.sensor.gpio);
+    if (!sensorAvailable) {
         logger.warn('Failed to initialize sensor');
     }
     
     this.updateData(function() {
-        this.lastUpdate = new Date();
-        logger.debug(this.name + " Data updated " + this.lastUpdate.toLocaleTimeString());
-        logger.debug("Wifi: "+ this.wifi + ", Uptime: " + this.uptime + ", CPU Temp: " + this.cpuTemp + ", Amb Temp: " + this.temperature + ", Amb Humidity: " + this.humidity);
+        lastUpdate = new Date();
+        logger.debug(name + " Data updated " + lastUpdate.toLocaleTimeString());
+        logger.debug("Wifi: "+ wifi + ", Uptime: " + uptime + ", CPU Temp: " + cpuTemp + ", Amb Temp: " + temperature + ", Amb Humidity: " + humidity);
     });
 
 }
