@@ -34,17 +34,19 @@ function garageData(clientName) {
 
 garageData.prototype.updateData = function() {
     exec(this.wifiCmd, function(error, stdout, stderr) {
-        this.wifi = stdout + "0%";
+        this.wifi = stdout; // + "0%";
     });
     exec(this.uptimeCmd, function(error, stdout, stderr) {
+        this.uptime = stdout;
         // split stdout between 2 numbers (use 1st number)
-        var uptimeString = stdout.split(" ");
+//        var uptimeString = stdout.split(" ");
         // change from seconds to days, hours, minutes, seconds
-        this.uptime = readify(parseFloat(uptimeString[0]));
+//        this.uptime = readify(parseFloat(uptimeString[0]));
     });
     exec(this.cpuTempCmd, function(error, stdout, stderr) {
-        var currentCpuTemp = parseFloat(stdout)/1000;
-        this.cpuTemp = currentCpuTemp.toFixed() + "C";
+        this.cpuTemp = stdout;
+//        var currentCpuTemp = parseFloat(stdout)/1000;
+//        this.cpuTemp = currentCpuTemp.toFixed() + "C";
     });
     if (this.sensorAvailable) {
         var readout = sensorLib.read();
