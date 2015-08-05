@@ -8,6 +8,12 @@ cfg.server.port = 8080;
 // Client Information
 cfg.client = {};
 cfg.client.address = 'http://192.168.1.241';
+cfg.client.name = "GaragePi";
+
+// DHT22 Sensor settings
+cfg.sensor = {};
+cfg.sensor.type = 22; //DHT22
+cfg.sensor.gpio = 22; //GPIO22
 
 // Garage Door settings
 cfg.garage_doors = {};
