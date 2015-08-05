@@ -28,11 +28,14 @@ function garageData(clientName) {
         logger.warn('Failed to initialize sensor');
     }
     
-    this.updateData();
+    this.updateData(function() {
+        logger.debug(this.name + " Data updated " + this.lastUpdate.toLocaleTimeString());
+        logger.debug("Wifi: "+ this.wifi + ", Uptime: " + this.uptime + ", CPU Temp: " + this.cpuTemp + ", Amb Temp: " + this.temperature + ", Amb Humidity: " + this.humidity);
+    });
 
 }
 
-garageData.prototype.updateData = function() {
+garageData.prototype.updateData = function(callback) {
     exec(this.wifiCmd, function(error, stdout, stderr) {
         this.wifi = stdout + "0%";
     });
@@ -51,8 +54,7 @@ garageData.prototype.updateData = function() {
         this.temperature = readout.temperature.toFixed(1) + "C";
         this.humidity = readout.humidity.toFixed(1) + "%";
     }
-    logger.debug(this.name + " Data updated " + this.lastUpdate.toLocaleTimeString());
-    logger.debug("Wifi: "+ this.wifi + ", Uptime: " + this.uptime + ", CPU Temp: " + this.cpuTemp + ", Amb Temp: " + this.temperature + ", Amb Humidity: " + this.humidity);
+    callback();
 }
 
 // Takes an amount of seconds and turns it into a human-readable amount of time.
