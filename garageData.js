@@ -29,9 +29,10 @@ function garageData(clientName) {
     }
     
     this.updateData(function() {
-        this.lastUpdate = new Date();
-        logger.debug(this.name + " Data updated " + this.lastUpdate.toLocaleTimeString());
-        logger.debug("Wifi: "+ this.wifi + ", Uptime: " + this.uptime + ", CPU Temp: " + this.cpuTemp + ", Amb Temp: " + this.temperature + ", Amb Humidity: " + this.humidity);
+        var self = this;
+        self.lastUpdate = new Date();
+        logger.debug(self.name + " Data updated " + self.lastUpdate.toLocaleTimeString());
+        logger.debug("Wifi: "+ self.wifi + ", Uptime: " + self.uptime + ", CPU Temp: " + self.cpuTemp + ", Amb Temp: " + self.temperature + ", Amb Humidity: " + self.humidity);
     });
 
 }
