@@ -17,7 +17,7 @@ io.on('connect', function(socket){
     for (var door in cfg.garage_doors){
         newDeviceID = cfg.garage_doors[door].deviceID;
         garageDoors[newDeviceID] = new garageDoor(cfg.garage_doors[door]);
-        garageDoors[newDeviceID].getStatus(function (err, result) {
+        garageDoors[newDeviceID].getStatus(function () {
             logger.info("Sending data for: " + garageDoors[newDeviceID].name);
             io.emit('SEND_DATA', garageDoors[newDeviceID]);
         });

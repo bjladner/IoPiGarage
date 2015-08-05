@@ -21,7 +21,6 @@ function garageData(clientName) {
 	this.cpuTemp = '';
 	this.temperature = '';
 	this.humidity = '';
-    this.lastUpdate = new Date();
 
     this.sensorAvailable = sensorLib.initialize(cfg.sensor.type, cfg.sensor.gpio);
     if (!this.sensorAvailable) {
@@ -29,6 +28,7 @@ function garageData(clientName) {
     }
     
     this.updateData(function() {
+        this.lastUpdate = new Date();
         logger.debug(this.name + " Data updated " + this.lastUpdate.toLocaleTimeString());
         logger.debug("Wifi: "+ this.wifi + ", Uptime: " + this.uptime + ", CPU Temp: " + this.cpuTemp + ", Amb Temp: " + this.temperature + ", Amb Humidity: " + this.humidity);
     });
