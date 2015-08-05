@@ -12,7 +12,12 @@ var garageDoors = {};
 
 io.on('connect', function(socket){
     logger.info("Connected to RPi2: " + cfg.server.address + ":" + cfg.server.port);
-    //io.emit('INIT_CLIENT', clientInfo);
+    clientInfo.updateData(function() {
+        logger.debug(clientInfo.name + " Data updated " + clientInfo.lastUpdate.toLocaleTimeString());
+        logger.debug("Wifi: "+ clientInfo.wifi + ", Uptime: " + clientInfo.uptime + ", CPU Temp: " + clientInfo.cpuTemp);
+        logger.debug("Amb Temp: " + clientInfo.temperature + ", Amb Humidity: " + clientInfo.humidity);
+        //io.emit('INIT_CLIENT', clientInfo);
+    });
   
     for (var door in cfg.garage_doors){
         newDeviceID = cfg.garage_doors[door].deviceID;
