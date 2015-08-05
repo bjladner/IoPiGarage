@@ -21,7 +21,7 @@ function garageData(clientName) {
 	this.cpuTemp = '';
 	this.temperature = '';
 	this.humidity = '';
-    this.lastUpdate = new Date().getTime();
+    this.lastUpdate = new Date();
 
     this.sensorAvailable = sensorLib.initialize(cfg.sensor.type, cfg.sensor.gpio);
     if (!this.sensorAvailable) {
@@ -34,26 +34,24 @@ function garageData(clientName) {
 
 garageData.prototype.updateData = function() {
     exec(this.wifiCmd, function(error, stdout, stderr) {
-        this.wifi = stdout; // + "0%";
+        this.wifi = stdout + "0%";
     });
     exec(this.uptimeCmd, function(error, stdout, stderr) {
-        this.uptime = stdout;
         // split stdout between 2 numbers (use 1st number)
-//        var uptimeString = stdout.split(" ");
+        var uptimeString = stdout.split(" ");
         // change from seconds to days, hours, minutes, seconds
-//        this.uptime = readify(parseFloat(uptimeString[0]));
+        this.uptime = readify(parseFloat(uptimeString[0]));
     });
     exec(this.cpuTempCmd, function(error, stdout, stderr) {
-        this.cpuTemp = stdout;
-//        var currentCpuTemp = parseFloat(stdout)/1000;
-//        this.cpuTemp = currentCpuTemp.toFixed() + "C";
+        var currentCpuTemp = parseFloat(stdout)/1000;
+        this.cpuTemp = currentCpuTemp.toFixed(1) + "C";
     });
     if (this.sensorAvailable) {
         var readout = sensorLib.read();
-        this.temperature = readout.temperature.toFixed(2) + "C";
-        this.humidity = readout.humidity.toFixed(2) + "%";
+        this.temperature = readout.temperature.toFixed(1) + "C";
+        this.humidity = readout.humidity.toFixed(1) + "%";
     }
-    logger.debug(this.name + " Data updated " + this.lastUpdate.toString());
+    logger.debug(this.name + " Data updated " + this.lastUpdate.toLocaleTimeString());
     logger.debug("Wifi: "+ this.wifi + ", Uptime: " + this.uptime + ", CPU Temp: " + this.cpuTemp + ", Amb Temp: " + this.temperature + ", Amb Humidity: " + this.humidity);
 }
 

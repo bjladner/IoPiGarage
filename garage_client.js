@@ -8,15 +8,6 @@ var logger = require("./logger");
 var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 
 var clientInfo = new garageData(cfg.client.name);
-var clientInfo = {
-	name: cfg.client.name,
-	wifi: 100,
-	uptime: 100,
-	cpuTemp: 100,
-	temperature: 100,
-	humidity: 100,
-    lastUpdate: 100
-};
 var garageDoors = {};
 
 io.on('connect', function(socket){
