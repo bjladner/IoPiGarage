@@ -24,7 +24,7 @@ function garageData(clientName) {
     this.lastUpdate = new Date().getTime();
 
     this.sensorAvailable = sensorLib.initialize(cfg.sensor.type, cfg.sensor.gpio);
-    if (!sensorAvailable) {
+    if (!this.sensorAvailable) {
         logger.warn('Failed to initialize sensor');
     }
     
