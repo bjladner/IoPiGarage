@@ -15,45 +15,46 @@ function garageData(clientName) {
     // to run external commands in node.js, check out:
     // http://stackoverflow.com/questions/20643470/execute-a-command-line-binary-in-node-js
 
-	var name = clientName;
-	var wifi = '';
-	var uptime = '';
-	var cpuTemp = '';
-	var temperature = '';
-	var humidity = '';
-    var lastUpdate = '';
+	this.name = clientName;
+	this.wifi = '';
+	this.uptime = '';
+	this.cpuTemp = '';
+	this.temperature = '';
+	this.humidity = '';
+    this.lastUpdate = '';
 
-    var sensorAvailable = sensorLib.initialize(cfg.sensor.type, cfg.sensor.gpio);
-    if (!sensorAvailable) {
+    this.sensorAvailable = sensorLib.initialize(cfg.sensor.type, cfg.sensor.gpio);
+    if (!this.sensorAvailable) {
         logger.warn('Failed to initialize sensor');
     }
     
     this.updateData(function() {
-        lastUpdate = new Date();
-        logger.debug(name + " Data updated " + lastUpdate.toLocaleTimeString());
-        logger.debug("Wifi: "+ wifi + ", Uptime: " + uptime + ", CPU Temp: " + cpuTemp + ", Amb Temp: " + temperature + ", Amb Humidity: " + humidity);
+        this.lastUpdate = new Date();
+        logger.debug(this.name + " Data updated " + this.lastUpdate.toLocaleTimeString());
+        logger.debug("Wifi: "+ this.wifi + ", Uptime: " + this.uptime + ", CPU Temp: " + this.cpuTemp + ", Amb Temp: " + this.temperature + ", Amb Humidity: " + this.humidity);
     });
 
 }
 
 garageData.prototype.updateData = function(callback) {
+    var self = this;
     exec(this.wifiCmd, function(error, stdout, stderr) {
-        this.wifi = stdout + "0%";
+        self.wifi = stdout + "0%";
     });
     exec(this.uptimeCmd, function(error, stdout, stderr) {
         // split stdout between 2 numbers (use 1st number)
         var uptimeString = stdout.split(" ");
         // change from seconds to days, hours, minutes, seconds
-        this.uptime = readify(parseFloat(uptimeString[0]));
+        self.uptime = readify(parseFloat(uptimeString[0]));
     });
     exec(this.cpuTempCmd, function(error, stdout, stderr) {
         var currentCpuTemp = parseFloat(stdout)/1000;
-        this.cpuTemp = currentCpuTemp.toFixed(1) + "C";
+        self.cpuTemp = currentCpuTemp.toFixed(1) + "C";
     });
     if (this.sensorAvailable) {
         var readout = sensorLib.read();
-        this.temperature = readout.temperature.toFixed(1) + "C";
-        this.humidity = readout.humidity.toFixed(1) + "%";
+        self.temperature = readout.temperature.toFixed(1) + "C";
+        self.humidity = readout.humidity.toFixed(1) + "%";
     }
     callback();
 }
