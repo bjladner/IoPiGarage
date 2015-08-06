@@ -86,5 +86,5 @@ function readify(seconds) {
 	var minutes = Math.floor(seconds / minuteLength);
 	seconds = seconds % minuteLength;
 	
-	return (days.toFixed() + "d " + hours.toFixed() + "h " + minutes.toFixed() + "m " + seconds.toFixed()  + "s");
+	return (days + "d " + hours + "h " + minutes + "m " + seconds  + "s");
 }

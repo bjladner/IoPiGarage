@@ -59,6 +59,11 @@ io.on('ACTION', function(data){
         garageDoors[data.nodeId].getStatus(function () {
             io.emit('SEND_DATA', garageDoors[data.nodeId]);
         });  
+    } else if (data.action == "PHOTO") {
+        logger.info("Taking photo in garage.");
+        //garageDoors[data.nodeId].getStatus(function () {
+        //    io.emit('SEND_DATA', garageDoors[data.nodeId]);
+        //});  
     } else {
         logger.warn("Unknown command: " + data.action);
     }
