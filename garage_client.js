@@ -2,12 +2,13 @@ var sock = require('socket.io-client');
 var cfg = require('./config.default');
 var garageDoor = require('./garageDoor');
 var garageData = require('./garageData');
-var garageCamera = require('./garageCamera');
+var RaspiCam = require("raspicam");
 var logger = require("./logger");
 
 var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 
 var clientInfo = new garageData(cfg.client.name);
+
 function clientUpdate() {
 	clientInfo.updateData(function() {
 	    for (var data in clientInfo) {
@@ -24,6 +25,16 @@ var garageDoors = {};
 
 io.on('connect', function(socket){
     logger.info("Connected to RPi2: " + cfg.server.address + ":" + cfg.server.port);
+
+    var camera = new RaspiCam({
+        mode: 'photo', 
+        output: '/home/bladner/Dropbox/photos/image.jpg',
+        encoding: "jpg",
+        //timeout: 0,
+        hf: true,
+        vf: true
+    });
+
 	clientUpdate();
   
     for (var door in cfg.garage_doors){
@@ -58,6 +69,7 @@ io.on('ACTION', function(data){
         });  
     } else if (data.action == "PHOTO") {
         logger.info("Taking photo in garage.");
+        camera.start();
         //garageDoors[data.nodeId].getStatus(function () {
         //    io.emit('SEND_DATA', garageDoors[data.nodeId]);
         //});  
@@ -65,3 +77,9 @@ io.on('ACTION', function(data){
         logger.warn("Unknown command: " + data.action);
     }
 });
+
+camera.on("read", function( err, timestamp, filename ){
+    logger.info("photo image captured with filename: " + filename );
+    clientInfo.photo = filename;
+});
+

@@ -16,7 +16,7 @@ var camera = new RaspiCam({
 // http://thejackalofjavascript.com/rpi-live-streaming/
 // https://github.com/troyth/node-raspicam
 
-camera.start();
+//camera.start();
 
 camera.on("start", function( err, timestamp ){
   console.log("photo started at " + timestamp );
