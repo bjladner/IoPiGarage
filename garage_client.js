@@ -8,6 +8,15 @@ var logger = require("./logger");
 var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 
 var clientInfo = new garageData(cfg.client.name);
+var garageDoors = {};
+var camera = new RaspiCam({
+    mode: 'photo', 
+    output: '/home/bladner/Dropbox/photos/image.jpg',
+    encoding: "jpg",
+    //timeout: 0,
+    hf: true,
+    vf: true
+});
 
 function clientUpdate() {
 	clientInfo.updateData(function() {
@@ -21,20 +30,9 @@ function clientUpdate() {
 		clientUpdate();
 	}, cfg.client.interval);
 }
-var garageDoors = {};
 
 io.on('connect', function(socket){
     logger.info("Connected to RPi2: " + cfg.server.address + ":" + cfg.server.port);
-
-    var camera = new RaspiCam({
-        mode: 'photo', 
-        output: '/home/bladner/Dropbox/photos/image.jpg',
-        encoding: "jpg",
-        //timeout: 0,
-        hf: true,
-        vf: true
-    });
-
 	clientUpdate();
   
     for (var door in cfg.garage_doors){
