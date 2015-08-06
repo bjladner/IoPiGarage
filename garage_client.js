@@ -7,11 +7,12 @@ var logger = require("./logger");
 
 var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 
+var cameraOutput = '/home/bladner/Dropbox/photos/image.jpg';
 var clientInfo = new garageData(cfg.client.name);
 var garageDoors = {};
 var camera = new RaspiCam({
     mode: 'photo', 
-    output: '/home/bladner/Dropbox/photos/image.jpg',
+    output: cameraOutput,
     encoding: "jpg",
     //timeout: 0,
     hf: true,
@@ -68,9 +69,6 @@ io.on('ACTION', function(data){
     } else if (data.action == "PHOTO") {
         logger.info("Taking photo in garage.");
         camera.start();
-        //garageDoors[data.nodeId].getStatus(function () {
-        //    io.emit('SEND_DATA', garageDoors[data.nodeId]);
-        //});  
     } else {
         logger.warn("Unknown command: " + data.action);
     }
@@ -78,6 +76,6 @@ io.on('ACTION', function(data){
 
 camera.on("read", function( err, timestamp, filename ){
     logger.info("photo image captured with filename: " + filename );
-    clientInfo.photo = filename;
+    clientInfo.photo = cameraOutput;
 });
 
