@@ -10,12 +10,9 @@ var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 var clientInfo = new garageData(cfg.client.name);
 function clientUpdate() {
 	clientInfo.updateData(function() {
-        //logger.debug(clientInfo.name + " Data updated " + clientInfo.lastUpdate.toLocaleTimeString());
-        //logger.debug("Wifi: "+ clientInfo.wifi + ", Uptime: " + clientInfo.uptime + ", CPU Temp: " + clientInfo.cpuTemp);
-        //logger.debug("Amb Temp: " + clientInfo.temperature + ", Amb Humidity: " + clientInfo.humidity);
 	    for (var data in clientInfo) {
 			if (data != "updateData")
-		        logger.info("clientInfo: " + data + " - " + clientInfo[data]);
+		        logger.debug("clientInfo: " + data + " - " + clientInfo[data]);
 	    }
         //io.emit('INIT_CLIENT', clientInfo);
     });

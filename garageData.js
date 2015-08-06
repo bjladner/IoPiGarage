@@ -27,8 +27,7 @@ garageData.prototype.updateData = function(callback) {
 	// Code for Wireless signal, Uptime, and CPU temperature
     //awk 'NR==3 {print $3 "0 %"}''' /proc/net/wireless 
     var wifiCmd = 'awk \'NR==3 {print \$3}\'\'\' /proc/net/wireless'; // (3rd line, 3rd item = wireless level in %)
-    //var wifiCmd = 'cat /proc/net/wireless'; // (3rd line, 3rd item = wireless level in %)
-    var uptimeCmd = 'cat /proc/uptime'; // (1st line, 1st item = uptime in seconds)
+    var uptimeCmd = 'awk \'{print \$1}\'\'\' /proc/uptime'; // (1st line, 1st item = uptime in seconds)
     var cpuTempCmd = 'cat /sys/class/thermal/thermal_zone0/temp'; // (only item in milidegrees C (x/1000))
     // to run external commands in node.js, check out:
     // http://stackoverflow.com/questions/20643470/execute-a-command-line-binary-in-node-js
@@ -39,29 +38,22 @@ garageData.prototype.updateData = function(callback) {
 			logger.error("error in wifiCmd:");
 			logger.error(error);
 		}
-        var currentWifi = parseFloat(stdout);
-        self.wifi = currentWifi.toFixed(1) + "%";
-		//logger.debug("Wifi = " + self.wifi);
+        self.wifi = parseFloat(stdout).toFixed(1) + "%";
     });
     exec(uptimeCmd, function(error, stdout, stderr) {
 		if (error) {
 			logger.error("error in uptimeCmd:");
 			logger.error(error);
 		}
-        // split stdout between 2 numbers (use 1st number)
-        var uptimeString = stdout.split(" ");
         // change from seconds to days, hours, minutes, seconds
-        self.uptime = readify(parseFloat(uptimeString[0]));
-		//logger.debug("Uptime = " + self.uptime);
+        self.uptime = readify(parseFloat(stdout));
     });
     exec(cpuTempCmd, function(error, stdout, stderr) {
 		if (error) {
 			logger.error("error in cpuTempCmd:");
 			logger.error(error);
 		}
-        var currentCpuTemp = parseFloat(stdout)/1000;
-        self.cpuTemp = currentCpuTemp.toFixed(1) + "C";
-		//logger.debug("CPU Temp = " + self.cpuTemp);
+        self.cpuTemp = (parseFloat(stdout)/1000).toFixed(1) + "C";
     });
     if (this.sensorAvailable) {
         var readout = sensorLib.read();
@@ -86,5 +78,5 @@ function readify(seconds) {
 	var minutes = Math.floor(seconds / minuteLength);
 	seconds = seconds % minuteLength;
 	
-	return (days + "d " + hours + "h " + minutes + "m " + seconds  + "s");
+	return (days + "d " + hours + "h " + minutes + "m " + seconds.toFixed()  + "s");
 }
