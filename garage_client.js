@@ -7,7 +7,7 @@ var logger = require("./logger");
 
 var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 
-var clientInfo = new garageData(cfg.client.name);
+var clientInfo = new garageData();
 clientInfo.photo = '/home/bladner/Dropbox/photos/image.jpg';
 
 var garageDoors = {};
@@ -27,13 +27,13 @@ var camera = new RaspiCam({
 function clientUpdate() {
 	clientInfo.updateData(function() {
 	    for (var data in clientInfo) {
-			if (data != "updateData")
+			if (data != "updateData" || data != "nodeID")
 		        logger.debug("clientInfo: " + data + " - " + clientInfo[data]);
 	    }
         for (var door in garageDoors){
-			garageDoors[door].clientInfo = clientInfo;
+			clientInfo.nodeID = garageDoors[door].deviceID;
             logger.debug("Sending client info for " + garageDoors[door].name);
-            //io.emit('SEND_DATA', garageDoors[door]);
+            io.emit('CLIENT_INFO', clientInfo);
         }
     });
 	clientInfo.timer = setTimeout(function() {
@@ -79,7 +79,10 @@ io.on('ACTION', function(data){
 });
 
 camera.on("read", function( err, timestamp, filename ){
-    logger.info("photo image captured with filename: " + filename );
-    //io.emit('CLIENT_INFO', garageDoors[data.nodeId]);
+    for (var door in garageDoors){
+	    clientInfo.nodeID = garageDoors[door].deviceID;
+        logger.debug("Updating photo for " + garageDoors[door].name);
+        io.emit('CLIENT_INFO', clientInfo);
+    }
 });
 

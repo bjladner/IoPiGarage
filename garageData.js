@@ -5,8 +5,7 @@ var cfg = require('./config.default');
 
 module.exports = garageData;
 
-function garageData(clientName) {
-	this.name = clientName;
+function garageData() {
 	this.wifi = 'not measured';
 	this.uptime = 'not measured';
 	this.cpuTemp = 'not measured';
