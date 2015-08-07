@@ -27,7 +27,7 @@ var camera = new RaspiCam({
 function clientUpdate() {
 	clientInfo.updateData(function() {
 	    for (var data in clientInfo) {
-			if (data != "updateData")
+			if (data != "updateData" && data != "nodeID")
 		        logger.debug("clientInfo: " + data + " - " + clientInfo[data]);
 	    }
         for (var door in garageDoors){
