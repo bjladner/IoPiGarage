@@ -38,7 +38,7 @@ garageData.prototype.updateData = function(callback) {
 			logger.error("error in wifiCmd:");
 			logger.error(error);
 		}
-        self.wifi = parseFloat(stdout).toFixed(1) + "%";
+        self.wifi = parseFloat(stdout).toFixed(1); // + "%";
     });
     exec(uptimeCmd, function(error, stdout, stderr) {
 		if (error) {

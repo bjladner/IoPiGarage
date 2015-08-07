@@ -7,9 +7,14 @@ var logger = require("./logger");
 
 var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 
-clientInfo.photo = '/home/bladner/Dropbox/photos/image.jpg';
 var clientInfo = new garageData(cfg.client.name);
+clientInfo.photo = '/home/bladner/Dropbox/photos/image.jpg';
+
 var garageDoors = {};
+for (var door in cfg.garage_doors){
+    garageDoors[cfg.garage_doors[door].deviceID] = new garageDoor(cfg.garage_doors[door]);
+}
+
 var camera = new RaspiCam({
     mode: 'photo', 
     output: clientInfo.photo,
@@ -25,27 +30,25 @@ function clientUpdate() {
 			if (data != "updateData")
 		        logger.debug("clientInfo: " + data + " - " + clientInfo[data]);
 	    }
-        //io.emit('CLIENT_INFO', clientInfo);
+        for (var door in garageDoors){
+			garageDoors[door].clientInfo = clientInfo;
+            logger.debug("Sending client info for " + garageDoors[door].name);
+            //io.emit('SEND_DATA', garageDoors[door]);
+        }
     });
 	clientInfo.timer = setTimeout(function() {
 		clientUpdate();
-	}, cfg.client.interval);
+	}, cfg.sensor.interval);
 }
 
 io.on('connect', function(socket){
     logger.info("Connected to RPi2: " + cfg.server.address + ":" + cfg.server.port);
-	clientUpdate();
   
-    for (var door in cfg.garage_doors){
-        newDeviceID = cfg.garage_doors[door].deviceID;
-        garageDoors[newDeviceID] = new garageDoor(cfg.garage_doors[door]);
-        garageDoors[newDeviceID].getStatus(function () {
-            logger.info("Sending data for: " + garageDoors[newDeviceID].name);
-            io.emit('SEND_DATA', garageDoors[newDeviceID]);
-        });
-    }
-
     for (var door in garageDoors){
+        garageDoors[door].getStatus(function () {
+            logger.info("Sending data for: " + garageDoors[door].name);
+            io.emit('SEND_DATA', garageDoors[door]);
+        });
         garageDoors[door].watchSensor(function (err, updateDoor) {
             if (err) { 
                 logger.ERROR("Error in intervalUpdate " + err);
@@ -55,7 +58,8 @@ io.on('connect', function(socket){
             io.emit('SEND_DATA', updateDoor);
         });
     }
-
+	
+	clientUpdate();
 });
 
 io.on('ACTION', function(data){
