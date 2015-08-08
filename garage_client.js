@@ -63,19 +63,21 @@ io.on('connect', function(socket){
 });
 
 io.on('ACTION', function(data){
-    logger.debug("Data received: " + JSON.stringify(data));
-    if (data.action == "CHANGE") {
-        garageDoors[data.nodeId].changeStatus();
-    } else if (data.action == "STATUS") {
-        garageDoors[data.nodeId].getStatus(function () {
-            io.emit('SEND_DATA', garageDoors[data.nodeId]);
-        });  
-    } else if (data.action == "PHOTO") {
-        logger.info("Taking photo in garage.");
-        camera.start();
-    } else {
-        logger.warn("Unknown command: " + data.action);
-    }
+	if (data.nodeId in garageDoors) {
+        logger.debug("Data received: " + JSON.stringify(data));
+        if (data.action == "CHANGE") {
+            garageDoors[data.nodeId].changeStatus();
+        } else if (data.action == "STATUS") {
+            garageDoors[data.nodeId].getStatus(function () {
+                io.emit('SEND_DATA', garageDoors[data.nodeId]);
+            });  
+        } else if (data.action == "PHOTO") {
+            logger.info("Taking photo in garage.");
+            camera.start();
+        } else {
+            logger.warn("Unknown command: " + data.action);
+        }
+	}
 });
 
 camera.on("read", function( err, timestamp, filename ){
