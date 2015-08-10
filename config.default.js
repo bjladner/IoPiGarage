@@ -3,7 +3,8 @@ var cfg = {};
 // Server Information
 cfg.server = {};
 cfg.server.address = 'http://192.168.1.76';
-cfg.server.port = 8080;
+//cfg.server.port = 8080;
+cfg.server.port = 8888;
 
 // Client Information
 cfg.client = {};

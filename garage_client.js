@@ -25,20 +25,20 @@ var camera = new RaspiCam({
 });
 
 function clientUpdate() {
-	clientInfo.updateData(function() {
-	    for (var data in clientInfo) {
-			if (data != "updateData" && data != "nodeID")
-		        logger.debug("clientInfo: " + data + " - " + clientInfo[data]);
-	    }
+    clientInfo.updateData(function() {
+    for (var data in clientInfo) {
+	if (data != "updateData" && data != "nodeID" && data != "timer")
+	    logger.debug("clientInfo: " + data + " - " + clientInfo[data]);
+	}
         for (var door in garageDoors){
-			clientInfo.nodeID = garageDoors[door].deviceID;
+	    clientInfo.nodeID = garageDoors[door].deviceID;
             logger.debug("Sending client info for " + garageDoors[door].name);
             io.emit('CLIENT_INFO', clientInfo);
         }
     });
-	clientInfo.timer = setTimeout(function() {
-		clientUpdate();
-	}, cfg.sensor.interval);
+    clientInfo.timer = setTimeout(function() {
+	clientUpdate();
+    }, cfg.sensor.interval);
 }
 
 io.on('connect', function(socket){
@@ -59,12 +59,14 @@ io.on('connect', function(socket){
         });
     }
 	
-	clientUpdate();
+    setTimeout(function() {
+        clientUpdate();
+    }, 1000);
 });
 
 io.on('ACTION', function(data){
-	if (data.nodeId in garageDoors) {
-        logger.debug("Data received: " + JSON.stringify(data));
+    if (data.nodeId in garageDoors) {
+        logger.debug("Garage data received: " + JSON.stringify(data));
         if (data.action == "CHANGE") {
             garageDoors[data.nodeId].changeStatus();
         } else if (data.action == "STATUS") {
@@ -76,8 +78,8 @@ io.on('ACTION', function(data){
             camera.start();
         } else {
             logger.warn("Unknown command: " + data.action);
-        }
 	}
+    }
 });
 
 camera.on("read", function( err, timestamp, filename ){
