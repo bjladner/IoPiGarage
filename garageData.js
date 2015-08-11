@@ -6,11 +6,11 @@ var cfg = require('./config.default');
 module.exports = garageData;
 
 function garageData() {
-	this.wifi = 'not measured';
-	this.uptime = 'not measured';
-	this.cpuTemp = 'not measured';
-	this.temperature = 'not measured';
-	this.humidity = 'not measured';
+    this.wifi = 'not measured';
+    this.uptime = 'not measured';
+    this.cpuTemp = 'not measured';
+    this.temperature = 'not measured';
+    this.humidity = 'not measured';
     this.lastUpdate = 'not measured';
 
     this.sensorAvailable = sensorLib.initialize(cfg.sensor.type, cfg.sensor.gpio);
@@ -23,7 +23,7 @@ garageData.prototype.updateData = function(callback) {
 //garageData.prototype.updateData = function() {
     var self = this;
 	
-	// Code for Wireless signal, Uptime, and CPU temperature
+    // Code for Wireless signal, Uptime, and CPU temperature
     //awk 'NR==3 {print $3 "0 %"}''' /proc/net/wireless 
     var wifiCmd = 'awk \'NR==3 {print \$3}\'\'\' /proc/net/wireless'; // (3rd line, 3rd item = wireless level in %)
     var uptimeCmd = 'awk \'{print \$1}\'\'\' /proc/uptime'; // (1st line, 1st item = uptime in seconds)
@@ -33,25 +33,19 @@ garageData.prototype.updateData = function(callback) {
 
     this.lastUpdate = new Date();
     exec(wifiCmd, function(error, stdout, stderr) {
-		if (error) {
-			logger.error("error in wifiCmd:");
-			logger.error(error);
-		}
+	if (error)
+	    logger.error("error in wifiCmd:" + error);
         self.wifi = parseFloat(stdout).toFixed(1); // + "%";
     });
     exec(uptimeCmd, function(error, stdout, stderr) {
-		if (error) {
-			logger.error("error in uptimeCmd:");
-			logger.error(error);
-		}
+	if (error)
+	    logger.error("error in uptimeCmd:" + error);
         // change from seconds to days, hours, minutes, seconds
         self.uptime = readify(parseFloat(stdout));
     });
     exec(cpuTempCmd, function(error, stdout, stderr) {
-		if (error) {
-			logger.error("error in cpuTempCmd:");
-			logger.error(error);
-		}
+	if (error)
+	    logger.error("error in cpuTempCmd:" + error);
         self.cpuTemp = (parseFloat(stdout)/1000).toFixed(1) + "C";
     });
     if (this.sensorAvailable) {

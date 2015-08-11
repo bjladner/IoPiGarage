@@ -9,6 +9,7 @@ var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 
 var clientInfo = new garageData();
 clientInfo.photo = '/home/bladner/Dropbox/photos/image.jpg';
+clientInfo.photoUpdate = "Never";
 
 var garageDoors = {};
 for (var door in cfg.garage_doors){
@@ -23,23 +24,6 @@ var camera = new RaspiCam({
     hf: true,
     vf: true
 });
-
-function clientUpdate() {
-    clientInfo.updateData(function() {
-    for (var data in clientInfo) {
-	if (data != "updateData" && data != "nodeID" && data != "timer")
-	    logger.debug("clientInfo: " + data + " - " + clientInfo[data]);
-	}
-        for (var door in garageDoors){
-	    clientInfo.nodeID = garageDoors[door].deviceID;
-            logger.debug("Sending client info for " + garageDoors[door].name);
-            io.emit('CLIENT_INFO', clientInfo);
-        }
-    });
-    clientInfo.timer = setTimeout(function() {
-	clientUpdate();
-    }, cfg.sensor.interval);
-}
 
 io.on('connect', function(socket){
     logger.info("Connected to RPi2: " + cfg.server.address + ":" + cfg.server.port);
@@ -59,7 +43,7 @@ io.on('connect', function(socket){
         });
     }
 	
-    setTimeout(function() {
+    clientInfo.timer = setTimeout(function() {
         clientUpdate();
     }, 1000);
 });
@@ -84,9 +68,25 @@ io.on('ACTION', function(data){
 
 camera.on("read", function( err, timestamp, filename ){
     for (var door in garageDoors){
-	    clientInfo.nodeID = garageDoors[door].deviceID;
         logger.debug("Updating photo for " + garageDoors[door].name);
-        io.emit('CLIENT_INFO', clientInfo);
+	clientInfo.photoUpdate = timestamp;
     }
 });
+
+function clientUpdate() {
+    clientInfo.updateData(function() {
+        for (var data in clientInfo) {
+	    if (data != "updateData" && data != "nodeID" && data != "timer")
+	        logger.debug("clientInfo: " + data + " - " + clientInfo[data]);
+	}
+        for (var door in garageDoors){
+	    clientInfo.nodeID = garageDoors[door].deviceID;
+            logger.debug("Sending client info for " + garageDoors[door].name);
+            io.emit('CLIENT_INFO', clientInfo);
+        }
+    });
+    clientInfo.timer = setTimeout(function() {
+	clientUpdate();
+    }, cfg.sensor.interval);
+}
 

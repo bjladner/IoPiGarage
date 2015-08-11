@@ -42,11 +42,11 @@ garageDoor.prototype.watchSensor = function(callback) {
         if (state == closedState) self.Status = "Closed";
         else if (state == openState) self.Status = "Open";
         else self.Status = "Unknown";
-		var currentTime = new Date().getTime();
-		if (currentTime > self.lastStateChange + 1000) {
+	var currentTime = new Date().getTime();
+	if (currentTime > self.lastStateChange + 1000) {
             self.lastStateChange = currentTime;
             logger.info(self.name + " changed state to " + self.Status);
             callback(null, self);
-		}
+	}
     });
 }
