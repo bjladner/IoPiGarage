@@ -1,13 +1,13 @@
 var sock = require('socket.io-client');
 var cfg = require('./config.default');
 var garageDoor = require('./garageDoor');
-var garageData = require('./garageData');
+var clientData = require('./clientData');
 var RaspiCam = require("raspicam");
 var logger = require("./logger");
 
 var io = sock.connect(cfg.server.address + ":" + cfg.server.port);
 
-var clientInfo = new garageData();
+var clientInfo = new clientData();
 clientInfo.photo = '/home/bladner/Dropbox/photos/image.jpg';
 clientInfo.photoUpdate = "Never";
 
@@ -87,6 +87,6 @@ function clientUpdate() {
     });
     clientInfo.timer = setTimeout(function() {
 	clientUpdate();
-    }, cfg.sensor.interval);
+    }, cfg.client.updateInterval);
 }
 

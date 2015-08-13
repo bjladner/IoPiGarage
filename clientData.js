@@ -3,24 +3,27 @@ var sensorLib = require('node-dht-sensor');
 var logger = require("./logger");
 var cfg = require('./config.default');
 
-module.exports = garageData;
+module.exports = clientData;
 
-function garageData() {
+function clientData() {
     this.wifi = 'not measured';
     this.uptime = 'not measured';
     this.cpuTemp = 'not measured';
-    this.temperature = 'not measured';
-    this.humidity = 'not measured';
     this.lastUpdate = 'not measured';
+    this.sensorAvailable = false;
+    
+    if (cfg.sensor.use) {
+        this.humidity = 'not measured';
+        this.lastUpdate = 'not measured';
 
-    this.sensorAvailable = sensorLib.initialize(cfg.sensor.type, cfg.sensor.gpio);
-    if (!this.sensorAvailable) {
-        logger.warn('Failed to initialize sensor');
+        this.sensorAvailable = sensorLib.initialize(cfg.sensor.type, cfg.sensor.gpio);
+        if (!this.sensorAvailable) {
+            logger.warn('Failed to initialize sensor');
+        }
     }
 }
 
-garageData.prototype.updateData = function(callback) {
-//garageData.prototype.updateData = function() {
+clientData.prototype.updateData = function(callback) {
     var self = this;
 	
     // Code for Wireless signal, Uptime, and CPU temperature
@@ -52,9 +55,6 @@ garageData.prototype.updateData = function(callback) {
         var readout = sensorLib.read();
         self.temperature = readout.temperature.toFixed(1) + "C";
         self.humidity = readout.humidity.toFixed(1) + "%";
-    } else {
-        self.temperature = "Sensor Failed";
-        self.humidity = "Sensor Failed";
     }		
     callback();
 }
